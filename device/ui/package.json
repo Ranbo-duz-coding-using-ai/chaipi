@@ -1,0 +1,19 @@
+{
+  "name": "chaipi-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runs the ChAIpi OS (mockup/chaipi-os.html) on the Raspberry Pi's SPI display",
+  "author": "Ranbir Dhall",
+  "license": "GPL-3.0-or-later",
+  "main": "host.js",
+  "engines": {
+    "node": ">=18.15"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.70",
+    "qrcode": "^1.5.4"
+  },
+  "scripts": {
+    "start": "node host.js --config /etc/chaipi/chaipi.toml"
+  }
+}

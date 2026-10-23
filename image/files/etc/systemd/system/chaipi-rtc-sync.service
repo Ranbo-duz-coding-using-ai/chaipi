@@ -1,0 +1,7 @@
+[Unit]
+Description=Copy the network time into the DS3231 clock
+ConditionPathExists=/dev/rtc0
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'timedatectl show -p NTPSynchronized --value | grep -qx yes && hwclock -w --utc || true'

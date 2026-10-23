@@ -1,0 +1,15 @@
+[Unit]
+Description=ChAIpi buttons, joystick, battery, vibration and backlight
+After=local-fs.target systemd-tmpfiles-setup.service
+
+[Service]
+User=chaipi
+Group=chaipi
+SupplementaryGroups=gpio i2c
+ExecStart=/usr/bin/python3 /opt/chaipi/device/input/chaipi_input.py --config /etc/chaipi/chaipi.toml
+Restart=always
+RestartSec=1
+Nice=-5
+
+[Install]
+WantedBy=multi-user.target

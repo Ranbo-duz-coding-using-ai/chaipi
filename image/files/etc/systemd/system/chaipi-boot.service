@@ -1,0 +1,14 @@
+[Unit]
+Description=ChAIpi boot tasks (Wi-Fi file, hotspot, clock, sound, folders)
+After=NetworkManager.service local-fs.target
+Wants=NetworkManager.service
+Before=chaipi-ui.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/chaipi/bin/chaipi-boot
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+// The ChAIpi UI (user chaipi) may manage Wi-Fi and the hotspot, and power off or restart.
+polkit.addRule(function (action, subject) {
+  if (subject.user !== "chaipi") return polkit.Result.NOT_HANDLED;
+  if (action.id.indexOf("org.freedesktop.NetworkManager.") === 0) return polkit.Result.YES;
+  if (action.id.indexOf("org.freedesktop.login1.power-off") === 0 || action.id.indexOf("org.freedesktop.login1.reboot") === 0) return polkit.Result.YES;
+  return polkit.Result.NOT_HANDLED;
+});

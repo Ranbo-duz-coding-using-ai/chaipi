@@ -1,0 +1,38 @@
+name: Bug report
+description: Something doesn't work, on the device or in the emulator
+labels: [bug]
+body:
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where did it happen?
+      options:
+        - On a real ChAIpi
+        - In the emulator
+        - Building the image
+        - Somewhere else
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      placeholder: Steps to reproduce, what you saw, what you expected to see.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Settings → System → About on the device, or the release name.
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Hardware (if on a real device)
+      description: Pi model, screen, and anything you wired differently from docs/03.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "Over SSH: journalctl -u chaipi-ui -u chaipi-input -u chaipi-boot -b --no-pager | tail -100"
+      render: text

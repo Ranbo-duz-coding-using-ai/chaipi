@@ -1,0 +1,21 @@
+[Unit]
+Description=ChAIpi OS on the 2.8" screen
+After=chaipi-boot.service chaipi-input.service NetworkManager.service
+Wants=chaipi-input.service chaipi-boot.service
+
+[Service]
+User=chaipi
+Group=chaipi
+SupplementaryGroups=video input gpio audio netdev render
+WorkingDirectory=/opt/chaipi/device/ui
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node --max-old-space-size=192 /opt/chaipi/device/ui/host.js --config /etc/chaipi/chaipi.toml
+Restart=always
+RestartSec=1
+Nice=-2
+OOMScoreAdjust=-300
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

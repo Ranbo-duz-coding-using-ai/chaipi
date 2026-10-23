@@ -1,0 +1,28 @@
+# The tests that need no Pi (device/README.md). The OS and library tests run in JavaScriptCore, which macOS has built in.
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install --quiet pytest chess pillow
+      - run: python3 -m pytest tests/test_input.py tests/test_transfer.py -q
+      - name: Emulator page builds
+        run: python3 tools/build_emulator.py /tmp/emulator/index.html --fonts-dir fonts
+  os:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: OS smoke test
+        run: /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc device/ui/test/os-smoke.js -- mockup/chaipi-os.html device/ui/lib
+      - name: Library tests
+        run: /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc device/ui/test/lib-test.js -- device/ui/lib config/chaipi.example.toml

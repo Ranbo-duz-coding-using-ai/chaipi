@@ -1,0 +1,20 @@
+name: Idea or feature request
+description: Something ChAIpi could do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like ChAIpi to do?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why, and how would you use it?
+  - type: checkboxes
+    id: limits
+    attributes:
+      label: Fits the device
+      options:
+        - label: It works with six buttons and a joystick, on a 320×240 screen, on a Pi Zero 2 W (512 MB RAM)

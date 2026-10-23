@@ -1,0 +1,36 @@
+[project]
+name = "chaipi"
+version = "0.1.0"
+description = "Pocket chess computer: Stockfish 19 on a Raspberry Pi Zero 2 W with an OLED, a joystick and voice input"
+requires-python = ">=3.11"
+authors = [{ name = "Ranbir Dhall" }]
+license = "GPL-3.0-or-later"
+dependencies = [
+    "chess>=1.11",
+    "luma.oled>=3.13",
+    "pillow>=10.1",
+    "tomli-w>=1.0",
+]
+
+[project.optional-dependencies]
+desktop = ["luma.emulator>=1.5", "pygame>=2.5"]
+voice = ["vosk>=0.3.45", "sounddevice>=0.4"]
+pi = ["gpiozero>=2.0", "smbus2>=0.4"]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"chaipi.ui.fonts" = ["*.ttf", "*.txt"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+    "engine: needs a real Stockfish binary (skipped when none is found)",
+]

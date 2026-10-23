@@ -1,0 +1,157 @@
+#!/bin/bash
+# chaipi-media: the parts of USB drive mode and the SD-card slot that need root.
+# The UI runs it as `sudo -n /opt/chaipi/bin/chaipi-media <command>` (allowed by /etc/sudoers.d/chaipi).
+# Every command prints one JSON line, {"msg": "..."}, which the UI shows as a toast.
+#
+#   usb-start    build a fresh FAT drive image (games to take, empty folders to fill) and offer it over USB
+#   usb-stop     stop offering it, then import whatever was copied into engines/ apps/ puzzles/ games/
+#   sd-summary   count what's in SD:/chaipi
+#   sd-import    import SD:/chaipi/{engines,apps,puzzles,games}
+#   sd-export    copy all games to SD:/chaipi/games
+#   sd-backup    write a backup to SD:/chaipi/backup
+#   sd-eject     unmount so the card can come out
+set -uo pipefail
+
+DATA=/data/chaipi
+IMG=$DATA/usb/drive.img
+GADGET=/sys/kernel/config/usb_gadget/chaipi
+MNT=/media/chaipi-sd
+PY="env PYTHONPATH=/opt/chaipi/device/transfer python3"
+
+say() { python3 -c 'import json,sys; print(json.dumps(dict(zip(sys.argv[1::2], sys.argv[2::2]))))' "$@"; }
+fail() { say msg "$1"; exit 1; }
+as_chaipi() { runuser -u chaipi -- "$@"; }
+
+install_from() {  # $1 = folder with engines/ apps/ puzzles/ games/
+  chown -R chaipi:chaipi "$1"
+  local out
+  out=$(as_chaipi $PY -m chaipi_xfer.install inbox "$1" --data "$DATA" 2>/dev/null | tail -1)
+  rm -rf "$1"
+  [ -n "$out" ] && echo "$out" || say msg "Nothing new to import"
+}
+
+usb_start() {
+  modprobe libcomposite 2>/dev/null || true
+  mountpoint -q /sys/kernel/config || mount -t configfs none /sys/kernel/config
+  [ -d /sys/class/udc ] && [ -n "$(ls /sys/class/udc 2>/dev/null)" ] || fail "USB device mode is off (dtoverlay=dwc2 missing)"
+  usb_unbind
+  mkdir -p "$DATA/usb"
+  rm -f "$IMG"
+  truncate -s 512M "$IMG"
+  mkfs.vfat -n CHAIPI "$IMG" >/dev/null || fail "Could not make the drive"
+  for d in games engines apps puzzles backups; do mmd -i "$IMG" "::/$d"; done
+  printf 'ChAIpi drive\r\n\r\ngames/    your games as PGN .txt files. Add .pgn files here to import them.\r\nengines/  put a Linux ARM64 UCI engine here (or a .zip with its network).\r\napps/     put a Python app here: a folder with main.py and app.toml.\r\npuzzles/  put a Lichess puzzle CSV or FEN list here.\r\n\r\nEject the drive on your computer, then press Esc on ChAIpi to import.\r\n' > /tmp/chaipi-readme.txt
+  mcopy -i "$IMG" /tmp/chaipi-readme.txt ::/README.txt && rm -f /tmp/chaipi-readme.txt
+  shopt -s nullglob
+  local games=("$DATA"/games/*.txt)
+  [ ${#games[@]} -gt 0 ] && mcopy -i "$IMG" "${games[@]}" ::/games/
+  ls "$DATA"/games/ > "$DATA/usb/exported.txt" 2>/dev/null
+  chown -R chaipi:chaipi "$DATA/usb"
+
+  mkdir -p "$GADGET" && cd "$GADGET" || fail "No USB gadget support"
+  echo 0x1d6b > idVendor          # Linux Foundation
+  echo 0x0104 > idProduct         # Multifunction Composite Gadget
+  echo 0x0100 > bcdDevice
+  echo 0x0200 > bcdUSB
+  mkdir -p strings/0x409 configs/c.1/strings/0x409 functions/mass_storage.usb0
+  echo "ChAIpi" > strings/0x409/manufacturer
+  echo "ChAIpi drive" > strings/0x409/product
+  tr -d '\0' < /sys/firmware/devicetree/base/serial-number > strings/0x409/serialnumber 2>/dev/null || echo 0000 > strings/0x409/serialnumber
+  echo "Drive" > configs/c.1/strings/0x409/configuration
+  echo 100 > configs/c.1/MaxPower
+  echo 1 > functions/mass_storage.usb0/stall
+  echo 1 > functions/mass_storage.usb0/lun.0/removable
+  echo 0 > functions/mass_storage.usb0/lun.0/ro
+  echo "$IMG" > functions/mass_storage.usb0/lun.0/file
+  ln -sf "$GADGET/functions/mass_storage.usb0" configs/c.1/
+  ls /sys/class/udc | head -1 > UDC || fail "USB port busy"
+  say msg "USB drive ready"
+}
+
+usb_unbind() {
+  [ -d "$GADGET" ] || return 0
+  echo "" > "$GADGET/UDC" 2>/dev/null || true
+  rm -f "$GADGET"/configs/c.1/mass_storage.usb0
+  rmdir "$GADGET"/configs/c.1/strings/0x409 "$GADGET"/configs/c.1 "$GADGET"/functions/mass_storage.usb0 "$GADGET"/strings/0x409 "$GADGET" 2>/dev/null || true
+}
+
+usb_stop() {
+  usb_unbind
+  [ -f "$IMG" ] || { say msg "USB drive mode off"; return; }
+  local work; work=$(mktemp -d "$DATA/inbox/usb-XXXX")
+  for d in engines apps puzzles; do mkdir -p "$work/$d"; mcopy -s -n -i "$IMG" "::/$d/*" "$work/$d/" 2>/dev/null || true; done
+  mkdir -p "$work/games" "$work/all-games"
+  mcopy -s -n -i "$IMG" "::/games/*" "$work/all-games/" 2>/dev/null || true
+  # Only games the computer added, not the ones ChAIpi put there.
+  for f in "$work"/all-games/*; do [ -e "$f" ] || continue; grep -qxF "$(basename "$f")" "$DATA/usb/exported.txt" 2>/dev/null || mv "$f" "$work/games/"; done
+  rm -rf "$work/all-games" "$IMG" "$DATA/usb/exported.txt"
+  install_from "$work"
+}
+
+sd_dev() {
+  local b
+  for b in /sys/block/mmcblk[1-9]; do
+    [ -e "$b" ] || continue
+    b=$(basename "$b")
+    if [ -e "/dev/${b}p1" ]; then echo "/dev/${b}p1"; else echo "/dev/$b"; fi
+    return 0
+  done
+  return 1
+}
+
+sd_mount() {  # $1 = ro|rw
+  local dev; dev=$(sd_dev) || fail "No SD card in the slot"
+  mkdir -p "$MNT"
+  mountpoint -q "$MNT" && umount "$MNT"
+  mount -o "$1,uid=$(id -u chaipi),gid=$(id -g chaipi),umask=022" "$dev" "$MNT" 2>/dev/null || mount -o "$1" "$dev" "$MNT" || fail "Can't read the card. Use FAT32 or exFAT"
+}
+
+sd_umount() { sync; mountpoint -q "$MNT" && umount "$MNT"; }
+
+count() { find "$1" -maxdepth 1 -mindepth 1 ! -name '.*' 2>/dev/null | wc -l | tr -d ' '; }
+
+sd_summary() {
+  sd_mount ro
+  local e a g
+  e=$(count "$MNT/chaipi/engines"); a=$(count "$MNT/chaipi/apps"); g=$(count "$MNT/chaipi/games")
+  sd_umount
+  say msg "SD card found" summary "SD:/chaipi · engines $e · apps $a · games $g"
+}
+
+sd_import() {
+  sd_mount ro
+  [ -d "$MNT/chaipi" ] || { sd_umount; fail "No chaipi folder on the card"; }
+  local work; work=$(mktemp -d "$DATA/inbox/sd-XXXX")
+  for d in engines apps puzzles games; do [ -d "$MNT/chaipi/$d" ] && cp -r "$MNT/chaipi/$d" "$work/"; done
+  sd_umount
+  install_from "$work"
+}
+
+sd_export() {
+  sd_mount rw
+  mkdir -p "$MNT/chaipi/games" "$MNT/chaipi/engines" "$MNT/chaipi/apps" "$MNT/chaipi/puzzles"
+  local n=0 f
+  for f in "$DATA"/games/*.txt; do [ -e "$f" ] || continue; cp "$f" "$MNT/chaipi/games/" && n=$((n + 1)); done
+  sd_umount
+  say msg "$n games copied to SD:/chaipi/games"
+}
+
+sd_backup() {
+  sd_mount rw
+  mkdir -p "$MNT/chaipi/backup"
+  local name="chaipi-backup-$(date +%Y-%m-%d).tar.gz"
+  as_chaipi $PY -c "import sys; from chaipi_xfer.install import make_backup; sys.stdout.buffer.write(make_backup('$DATA'))" > "$MNT/chaipi/backup/$name" || { sd_umount; fail "Backup failed"; }
+  sd_umount
+  say msg "Backed up to SD:/chaipi/backup"
+}
+
+case "${1:-}" in
+  usb-start) usb_start ;;
+  usb-stop) usb_stop ;;
+  sd-summary) sd_summary ;;
+  sd-import) sd_import ;;
+  sd-export) sd_export ;;
+  sd-backup) sd_backup ;;
+  sd-eject) sd_umount; say msg "Safe to remove the card" ;;
+  *) say msg "usage: chaipi-media usb-start|usb-stop|sd-summary|sd-import|sd-export|sd-backup|sd-eject"; exit 2 ;;
+esac

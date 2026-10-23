@@ -1,0 +1,2 @@
+# USB drive mode and the SD slot need root for a moment; only this one script is allowed.
+chaipi ALL=(root) NOPASSWD: /opt/chaipi/bin/chaipi-media

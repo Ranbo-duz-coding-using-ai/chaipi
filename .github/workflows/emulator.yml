@@ -1,0 +1,33 @@
+# Publishes the ChAIpi OS emulator as the repository's GitHub Pages site.
+# Pages sites are public, so this only runs once the repository is public. First time: Settings -> Pages ->
+# Source: "GitHub Actions", then Actions -> "Emulator website" -> Run workflow.
+name: Emulator website
+on:
+  push:
+    branches: [main]
+    paths: [mockup/**, device/fonts/**, tools/build_emulator.py, .github/workflows/emulator.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the page
+        run: python3 tools/build_emulator.py _site/index.html --fonts-dir fonts
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

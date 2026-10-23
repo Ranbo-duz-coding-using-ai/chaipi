@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+# Desktop data dir (games, logs, current.json, settings.toml, counter)
+var/
+
+# device build outputs
+image/work/
+image/deploy/
+device/ui/node_modules/
+.DS_Store
+
+# emulator builds
+_site/
+chaipi-emulator.html

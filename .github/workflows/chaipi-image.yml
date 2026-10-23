@@ -1,0 +1,58 @@
+# Builds the ChAIpi SD-card image on GitHub's machines and publishes it, with the emulator, as a Release.
+# Actions tab -> "ChAIpi image" -> Run workflow. About 1 hour on x86 runners with ARM emulation.
+# The image has no SSH key in it: people add their own with chaipi-ssh.txt on the boot partition.
+name: ChAIpi image
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "ubuntu-24.04 works for any repository; ubuntu-24.04-arm is faster if your plan has ARM runners"
+        type: choice
+        default: ubuntu-24.04
+        options: [ubuntu-24.04, ubuntu-24.04-arm]
+      prerelease:
+        description: "Mark the release as a pre-release (keep this on until ChAIpi has been tested on real hardware)"
+        type: boolean
+        default: true
+permissions:
+  contents: write
+jobs:
+  image:
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+      - name: ARM emulation (x86 runners only)
+        if: runner.arch == 'X64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Device tests
+        run: |
+          python3 -m pip install --quiet pytest chess pillow
+          python3 -m pytest tests/test_input.py tests/test_transfer.py -q
+      - name: Build image
+        run: ./image/build.sh
+      - name: Emulator (one file, works offline)
+        run: python3 tools/build_emulator.py image/deploy/chaipi-emulator.html --inline-fonts
+      # A Release, not an artifact: artifacts are capped at 500 MB on free private repositories, and the image is bigger.
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd image/deploy
+          rm -f pi-password.txt   # never published; SSH takes keys only, and sudo needs no password
+          version=$(cat ../../VERSION)
+          tag="v$version"
+          gh release view "$tag" >/dev/null 2>&1 && tag="v$version-build.${{ github.run_number }}"
+          sed -e "s/{VERSION}/$version/g" -e "s/{SHA}/${{ github.sha }}/g" -e "s/{RUN}/${{ github.run_id }}/g" \
+            ../../.github/release-notes.md > ../notes.md
+          gh release create "$tag" ./* --title "ChAIpi $version" --notes-file ../notes.md \
+            --target "${{ github.sha }}" ${{ inputs.prerelease && '--prerelease' || '' }}

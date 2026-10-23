@@ -1,0 +1,23 @@
+# --- ChAIpi hardware, revision 3 (docs/12-revision-3.md). Added by image/install.sh. ---
+[all]
+dtparam=spi=on
+dtparam=i2c_arm=on
+dtparam=i2c_arm_baudrate=400000
+dtparam=audio=off
+# 2.8" ILI9341: DC GPIO25, RESET GPIO24, landscape. Swapped red/blue: remove ",bgr". Upside down: rotate=270.
+dtoverlay=fbtft,spi0-0,ili9341,bgr,reset_pin=24,dc_pin=25,rotate=90,speed=32000000,fps=30
+# Backlight: hardware PWM1 on GPIO13
+dtoverlay=pwm,pin=13,func=4
+# DS3231 real-time clock on I2C
+dtoverlay=i2c-rtc,ds3231
+# MAX98357A I2S amplifier: BCLK 18, LRC 19, DIN 21 (harmless if the amplifier isn't fitted)
+dtoverlay=max98357a,no-sdmode
+# USB port as a device, for USB drive mode
+dtoverlay=dwc2,dr_mode=peripheral
+# Bluetooth off: saves memory and gives the serial console (GPIO14/15) the good UART
+dtoverlay=disable-bt
+enable_uart=1
+# microSD slot on the display (optional, needs SD_CS to GPIO7 and MISO to GPIO9). Check the parameter
+# names in /boot/firmware/overlays/README before enabling:
+#dtoverlay=mmc-spi-slot,spi0-1
+# --- end ChAIpi ---

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Drive ChAIpi from an SSH session: arrows, Enter, Esc, Tab, m (Menu), f (Fn). See the help it prints.
+exec python3 /opt/chaipi/device/input/chaipi_keys.py "$@"

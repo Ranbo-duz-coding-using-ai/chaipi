@@ -1,0 +1,98 @@
+# ChAIpi hardware and system configuration, revision 3 (docs/12-revision-3.md, docs/13-device-software.md).
+# The image installs this as /etc/chaipi/chaipi.toml. Pins and tunables live here only; never hard-code them.
+# Player settings (theme, Elo, clocks, boards, Wi-Fi choice…) are not here: the OS keeps those in
+# /data/chaipi/state.json and you change them on the device.
+
+[paths]
+data = "/data/chaipi"                      # games/, engines/, apps/, puzzles/, inbox/, logs/, state.json
+engines = "/opt/chaipi/engines"            # built-in engines (Stockfish 19)
+fonts = "/opt/chaipi/fonts"
+os = "/opt/chaipi/ui/chaipi-os.html"       # the OS itself: the same file as mockup/chaipi-os.html
+run = "/run/chaipi"                        # sockets
+sdk = "/opt/chaipi/device/sdk"             # Python package for custom apps (import chaipi)
+
+[display]
+fb = "auto"            # "auto" picks the framebuffer named fb_ili9341, or give a path like "/dev/fb1"
+rotate = 0             # extra software rotation: 0 or 180 (use the overlay's rotate= for 90/270)
+fps = 30               # while you're pressing buttons or something moves
+idle_fps = 12          # otherwise
+
+[backlight]
+pwm_chip = 0           # hardware PWM: dtoverlay=pwm,pin=13,func=4 gives pwmchip0 channel 1
+pwm_channel = 1
+gpio = 13              # used for software PWM if the hardware PWM isn't there
+frequency_hz = 1000
+invert = false         # true if the backlight goes through a PNP transistor (docs/03-wiring.md, step 2)
+sleep_level = 0.04     # brightness of the sleep clock
+off_after_sleep_s = 600
+
+[buttons]              # BCM numbers. Each button goes from the pin to GND; internal pull-ups.
+OK = 5                 # Confirm
+BKSP = 6               # Backspace / undo
+ESC = 16
+TAB = 26
+MENU = 23
+FN = 17
+STICK = 27             # joystick press
+bounce_ms = 15
+
+[joystick]
+adc_x = 0
+adc_y = 1
+invert_x = false
+invert_y = false
+swap_xy = false
+press = 0.55           # fraction of full throw that counts as a direction
+release = 0.35
+rate_hz = 100
+
+[adc]
+i2c_bus = 1
+address = 0x48
+
+[battery]
+adc_channel = 2
+divider = 2.0          # 100k:100k. To calibrate: divider × (multimeter volts ÷ volts shown in Settings)
+usb_channel = 3
+usb_divider = 2.0
+usb_present_v = 4.4
+capacity_mah = 4000    # 6000 with the big cell; used for "time left"
+warn_v = 3.50
+shutdown_v = 3.35      # under load; ChAIpi saves and powers off after 30 s below this
+
+[vibration]
+gpio = 12
+light_ms = 18
+strong_ms = 45
+
+[engine]
+threads = 4            # all four cores; the UI keeps priority because the engine runs at nice 5
+nice = 5
+hash_mb = 64           # Settings → Engines → Hash memory overrides this
+think_fast_ms = 1000
+think_medium_ms = 4000
+think_deep_ms = 12000
+analyse_steps_ms = [250, 900]   # quick passes before the full think time
+review_ms = 250        # per position in Game review
+weak_multipv = 8       # below Elo 1320, ChAIpi picks among this many moves
+restart_max = 5        # automatic engine restarts allowed per minute
+
+[audio]
+volume = 70            # percent; software volume, the MAX98357A has none
+max_volume = 85        # keeps sound peaks inside what the MT3608 boost can supply
+
+[transfer]
+port = 80
+hotspot_connection = "chaipi-hotspot"
+hotspot_ip = "192.168.4.1"
+max_upload_mb = 300
+pin_tries = 5
+lockout_s = 60
+
+[shorts]
+feed_query = "chess #shorts"
+max_height = 360
+yt_dlp = "/opt/chaipi/venv/bin/yt-dlp"
+
+[catalog]
+url = ""               # engine catalog (docs/13). Empty: engines come in by Transfer, USB or SD only

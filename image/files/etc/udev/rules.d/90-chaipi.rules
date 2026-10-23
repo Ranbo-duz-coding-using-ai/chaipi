@@ -1,0 +1,2 @@
+# Let the gpio group (chaipi-input) drive the backlight PWM.
+SUBSYSTEM=="pwm*", PROGRAM="/bin/sh -c 'chgrp -R gpio /sys/class/pwm/ /sys/devices/platform/soc/*.pwm/pwm/ 2>/dev/null; chmod -R g=u /sys/class/pwm/ /sys/devices/platform/soc/*.pwm/pwm/ 2>/dev/null; true'"

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 680" style="font-family:'Atkinson Hyperlegible','Segoe UI',Helvetica,Arial,sans-serif">
+<rect width="1240" height="680" fill="#ffffff"/>
+<text x="40" y="44" style="font-size:27px;font-weight:700" fill="#1b1b1b">ChAIpi power: battery to Pi</text>
+<text x="40" y="72" style="font-size:15px" fill="#555">Red = positive, black = negative, dashed = thin sense wire. Keep the switch OFF while soldering. Set the MT3608 to 5.1 V before the Pi is connected.</text>
+<rect x="40" y="200" width="200" height="230" rx="12" fill="#f4f1ec" stroke="#8a7f72" stroke-width="2"/>
+<text x="140.0" y="227" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Battery</text>
+<text x="140.0" y="250" text-anchor="middle" style="font-size:13.5px" fill="#555">2 × 2000 mAh in parallel</text>
+<text x="140.0" y="269" text-anchor="middle" style="font-size:13.5px" fill="#555">(or one 6000 mAh)</text>
+<rect x="56" y="305" width="48" height="80" rx="6" fill="#fff" stroke="#8a7f72" stroke-width="1.5"/>
+<text x="80" y="325" text-anchor="middle" style="font-size:13px;font-weight:700" fill="#d7263d">+</text>
+<text x="80" y="377" text-anchor="middle" style="font-size:15px;font-weight:700" fill="#222222">−</text>
+<text x="80" y="352" text-anchor="middle" style="font-size:11px" fill="#777">A</text>
+<rect x="136" y="305" width="48" height="80" rx="6" fill="#fff" stroke="#8a7f72" stroke-width="1.5"/>
+<text x="160" y="325" text-anchor="middle" style="font-size:13px;font-weight:700" fill="#d7263d">+</text>
+<text x="160" y="377" text-anchor="middle" style="font-size:15px;font-weight:700" fill="#222222">−</text>
+<text x="160" y="352" text-anchor="middle" style="font-size:11px" fill="#777">B</text>
+<path d="M80 305 L80 295 L160 295 L160 305" fill="none" stroke="#d7263d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M80 385 L80 400 L160 400 L160 385" fill="none" stroke="#222222" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="240" cy="270" r="6" fill="#d7263d" stroke="#fff" stroke-width="2"/>
+<text x="228" y="275" text-anchor="end" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#d7263d">+</text>
+<circle cx="240" cy="350" r="6" fill="#222222" stroke="#fff" stroke-width="2"/>
+<text x="228" y="355" text-anchor="end" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#222222">−</text>
+<text x="140" y="458" text-anchor="middle" style="font-size:13px;font-weight:700" fill="#b4232f">Charge or measure both cells to</text>
+<text x="140" y="476" text-anchor="middle" style="font-size:13px;font-weight:700" fill="#b4232f">within 0.05 V before joining them</text>
+<rect x="340" y="200" width="200" height="210" rx="12" fill="#f4f1ec" stroke="#8a7f72" stroke-width="2"/>
+<text x="440.0" y="227" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">TP4056</text>
+<text x="440.0" y="250" text-anchor="middle" style="font-size:13.5px" fill="#555">USB-C charger, 1 A</text>
+<circle cx="340" cy="270" r="6" fill="#d7263d" stroke="#fff" stroke-width="2"/>
+<text x="352" y="275" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#d7263d">B+</text>
+<circle cx="340" cy="350" r="6" fill="#222222" stroke="#fff" stroke-width="2"/>
+<text x="352" y="355" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#222222">B−</text>
+<circle cx="540" cy="270" r="6" fill="#d7263d" stroke="#fff" stroke-width="2"/>
+<text x="528" y="275" text-anchor="end" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#d7263d">OUT+</text>
+<circle cx="540" cy="350" r="6" fill="#222222" stroke="#fff" stroke-width="2"/>
+<text x="528" y="355" text-anchor="end" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#222222">OUT−</text>
+<circle cx="400" cy="410" r="6" fill="#d7263d" stroke="#fff" stroke-width="2"/>
+<text x="400" y="398" text-anchor="middle" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#d7263d">IN+</text>
+<circle cx="480" cy="410" r="6" fill="#222222" stroke="#fff" stroke-width="2"/>
+<text x="480" y="398" text-anchor="middle" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#222222">IN−</text>
+<path d="M246 270 L334 270" fill="none" stroke="#d7263d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M246 350 L334 350" fill="none" stroke="#222222" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="340" y="520" width="200" height="70" rx="12" fill="#eef3fb" stroke="#7d93b8" stroke-width="2"/>
+<text x="440.0" y="547" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">USB-C</text>
+<text x="440.0" y="570" text-anchor="middle" style="font-size:13.5px" fill="#555">charger cable</text>
+<path d="M400 520 L400 416" fill="none" stroke="#d7263d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M480 520 L480 416" fill="none" stroke="#222222" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="40" y="520" width="260" height="110" rx="12" fill="#eefaf4" stroke="#13a06f" stroke-width="2"/>
+<text x="170.0" y="547" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Charger sense</text>
+<text x="170.0" y="570" text-anchor="middle" style="font-size:13.5px" fill="#555">IN+ → 100 k → node → 100 k → GND</text>
+<text x="170.0" y="589" text-anchor="middle" style="font-size:13.5px" fill="#555">node → ADS1115 A3</text>
+<text x="170.0" y="608" text-anchor="middle" style="font-size:13.5px" fill="#555">(shows “charging”)</text>
+<path d="M400 470 L280 470 L280 520" fill="none" stroke="#d7263d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6"/>
+<rect x="620" y="225" width="130" height="85" rx="12" fill="#f4f1ec" stroke="#8a7f72" stroke-width="2"/>
+<text x="685.0" y="252" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Rocker switch</text>
+<text x="685.0" y="275" text-anchor="middle" style="font-size:13.5px" fill="#555">ON / OFF</text>
+<path d="M546 270 L620 270" fill="none" stroke="#d7263d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M750 270 L854 270" fill="none" stroke="#d7263d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M546 350 L854 350" fill="none" stroke="#222222" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="640" y="92" width="300" height="112" rx="12" fill="#eefaf4" stroke="#13a06f" stroke-width="2"/>
+<text x="790.0" y="119" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Battery sense</text>
+<text x="790.0" y="142" text-anchor="middle" style="font-size:13.5px" fill="#555">VIN+ → 100 k → node → 100 k → GND</text>
+<text x="790.0" y="161" text-anchor="middle" style="font-size:13.5px" fill="#555">node → ADS1115 A2</text>
+<text x="790.0" y="180" text-anchor="middle" style="font-size:13.5px" fill="#555">after the switch, so no drain when off</text>
+<path d="M800 270 L800 204" fill="none" stroke="#d7263d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6"/>
+<rect x="860" y="200" width="200" height="210" rx="12" fill="#f4f1ec" stroke="#8a7f72" stroke-width="2"/>
+<text x="960.0" y="227" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">MT3608 boost</text>
+<text x="960.0" y="250" text-anchor="middle" style="font-size:13.5px" fill="#555">set VOUT to 5.10 V</text>
+<circle cx="860" cy="270" r="6" fill="#d7263d" stroke="#fff" stroke-width="2"/>
+<text x="872" y="275" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#d7263d">VIN+</text>
+<circle cx="860" cy="350" r="6" fill="#222222" stroke="#fff" stroke-width="2"/>
+<text x="872" y="355" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#222222">VIN−</text>
+<circle cx="1060" cy="270" r="6" fill="#d7263d" stroke="#fff" stroke-width="2"/>
+<text x="1048" y="275" text-anchor="end" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#d7263d">VOUT+</text>
+<circle cx="1060" cy="350" r="6" fill="#222222" stroke="#fff" stroke-width="2"/>
+<text x="1048" y="355" text-anchor="end" style="font-family:'JetBrains Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:700" fill="#222222">VOUT−</text>
+<path d="M1066 270 L1180 270 L1180 460 L640 460" fill="none" stroke="#d7263d" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1066 350 L1210 350 L1210 630 L705 630" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="butt"/>
+<path d="M1066 350 L1210 350 L1210 630 L705 630" fill="none" stroke="#222222" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1168" y="452" text-anchor="end" style="font-size:13px;font-weight:700" fill="#d7263d">5 V bus</text>
+<text x="1198" y="650" text-anchor="end" style="font-size:13px;font-weight:700" fill="#222">GND bus</text>
+<rect x="610" y="490" width="125" height="110" rx="12" fill="#fbf1f2" stroke="#d7263d" stroke-width="2"/>
+<text x="672.5" y="517" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Pi header</text>
+<text x="672.5" y="540" text-anchor="middle" style="font-size:13.5px" fill="#555">pin 2 = 5 V</text>
+<text x="672.5" y="559" text-anchor="middle" style="font-size:13.5px" fill="#555">pin 6 = GND</text>
+<path d="M640 460 L640 490" fill="none" stroke="#d7263d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M705 630 L705 600" fill="none" stroke="#222222" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="745" y="490" width="125" height="110" rx="12" fill="#fbf1f2" stroke="#d7263d" stroke-width="2"/>
+<text x="807.5" y="517" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Vibration</text>
+<text x="807.5" y="540" text-anchor="middle" style="font-size:13.5px" fill="#555">VCC, GND</text>
+<path d="M775 460 L775 490" fill="none" stroke="#d7263d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M840 630 L840 600" fill="none" stroke="#222222" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="880" y="490" width="125" height="110" rx="12" fill="#fbf1f2" stroke="#d7263d" stroke-width="2"/>
+<text x="942.5" y="517" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">MAX98357A</text>
+<text x="942.5" y="540" text-anchor="middle" style="font-size:13.5px" fill="#555">VIN, GND</text>
+<text x="942.5" y="559" text-anchor="middle" style="font-size:13.5px" fill="#555">(optional)</text>
+<path d="M910 460 L910 490" fill="none" stroke="#d7263d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M975 630 L975 600" fill="none" stroke="#222222" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="1015" y="490" width="125" height="110" rx="12" fill="#fbf1f2" stroke="#d7263d" stroke-width="2"/>
+<text x="1077.5" y="517" text-anchor="middle" style="font-size:16px;font-weight:700" fill="#1b1b1b">Capacitor</text>
+<text x="1077.5" y="540" text-anchor="middle" style="font-size:13.5px" fill="#555">470–1000 µF</text>
+<text x="1077.5" y="559" text-anchor="middle" style="font-size:13.5px" fill="#555">stripe = GND</text>
+<path d="M1045 460 L1045 490" fill="none" stroke="#d7263d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1110 630 L1110 600" fill="none" stroke="#222222" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1200" y="668" text-anchor="end" style="font-size:12px" fill="#888">docs/03-wiring.md, steps 1 and 6</text>
+</svg>

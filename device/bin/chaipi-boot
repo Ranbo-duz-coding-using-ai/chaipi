@@ -1,0 +1,104 @@
+#!/bin/bash
+# chaipi-boot: runs as root at every boot, before the UI (chaipi-boot.service).
+#  1. Wi-Fi (and time zone) from /boot/firmware/chaipi-wifi.txt, and SSH keys from /boot/firmware/chaipi-ssh.txt,
+#     if you left them there (both files are deleted afterwards)
+#  2. the transfer hotspot "ChAIpi-XXXX" with its own password, made once
+#  3. the clock from the DS3231 if the system clock is behind it
+#  4. a volume control for the I2S amplifier, if one is fitted
+#  5. folders and ownership under /data/chaipi
+set -u
+log() { echo "chaipi-boot: $*"; }
+
+# --- 1. Wi-Fi from the boot partition ------------------------------------------------------------
+WIFI=/boot/firmware/chaipi-wifi.txt
+if [ -f "$WIFI" ]; then
+  ssid=$(sed -n 's/^ssid[[:space:]]*=[[:space:]]*//p' "$WIFI" | head -1 | tr -d '\r')
+  psk=$(sed -n 's/^password[[:space:]]*=[[:space:]]*//p' "$WIFI" | head -1 | tr -d '\r')
+  country=$(sed -n 's/^country[[:space:]]*=[[:space:]]*//p' "$WIFI" | head -1 | tr -d '\r')
+  tz=$(sed -n 's/^timezone[[:space:]]*=[[:space:]]*//p' "$WIFI" | head -1 | tr -d '\r ')
+  [ -n "$country" ] && iw reg set "$country" 2>/dev/null
+  if [ -n "$tz" ] && [ -f "/usr/share/zoneinfo/$tz" ]; then timedatectl set-timezone "$tz" && log "time zone $tz"; fi
+  if [ -n "$ssid" ]; then
+    for i in $(seq 1 20); do nmcli -t general status >/dev/null 2>&1 && break; sleep 1; done
+    nmcli connection delete id "$ssid" >/dev/null 2>&1
+    if [ -n "$psk" ]; then
+      nmcli connection add type wifi ifname wlan0 con-name "$ssid" ssid "$ssid" wifi-sec.key-mgmt wpa-psk wifi-sec.psk "$psk" connection.autoconnect yes >/dev/null && log "added Wi-Fi $ssid"
+    else
+      nmcli connection add type wifi ifname wlan0 con-name "$ssid" ssid "$ssid" connection.autoconnect yes >/dev/null && log "added open Wi-Fi $ssid"
+    fi
+    nmcli connection up id "$ssid" >/dev/null 2>&1 &
+  fi
+  shred -u "$WIFI" 2>/dev/null || rm -f "$WIFI"
+fi
+
+# The published image has no SSH key in it. Yours goes in chaipi-ssh.txt (one public key per line).
+KEYS=/boot/firmware/chaipi-ssh.txt
+if [ -f "$KEYS" ]; then
+  IFS=: read -r user home < <(getent passwd 1000 | cut -d: -f1,6)
+  if [ -n "${user:-}" ] && [ -d "$home" ]; then
+    install -d -o "$user" -g "$user" -m 700 "$home/.ssh"
+    touch "$home/.ssh/authorized_keys"
+    n=0
+    while IFS= read -r key; do
+      key=$(echo "$key" | tr -d '\r')
+      case "$key" in ssh-*|ecdsa-*|sk-*) grep -qxF "$key" "$home/.ssh/authorized_keys" || { echo "$key" >> "$home/.ssh/authorized_keys"; n=$((n + 1)); } ;; esac
+    done < "$KEYS"
+    chown "$user:$user" "$home/.ssh/authorized_keys"; chmod 600 "$home/.ssh/authorized_keys"
+    log "added $n SSH key(s) for $user"
+  fi
+  rm -f "$KEYS"
+fi
+
+# --- 2. hotspot for Transfer ------------------------------------------------------------------------
+HS=/etc/chaipi/hotspot.json
+if ! nmcli -t -f NAME connection show 2>/dev/null | grep -qx chaipi-hotspot; then
+  serial=$(tr -d '\0' < /sys/firmware/devicetree/base/serial-number 2>/dev/null || echo 0000)
+  ssid="ChAIpi-$(echo "${serial: -4}" | tr '[:lower:]' '[:upper:]')"
+  words=(masala adrak elaichi tulsi kulhad saunf jaggery cutting kesar pudina laung dalchini gulab kadak meetha garam \
+         rook pawn knight bishop queen king castle gambit endgame opening tempo zugzwang fianchetto blitz rapid check \
+         samosa pakora mathri rusk biscuit monsoon terrace balcony rickshaw ghat bazaar kettle saucer steam brew leaf \
+         mango guava jamun litchi chikoo papaya ber amla neem peepal banyan lotus jasmine marigold mehendi rangoli)
+  pick() { echo "${words[$(( $(od -An -N2 -tu2 /dev/urandom) % ${#words[@]} ))]}"; }
+  psk="$(pick)-$(pick)-$(( $(od -An -N2 -tu2 /dev/urandom) % 9000 + 1000 ))"
+  nmcli connection add type wifi ifname wlan0 con-name chaipi-hotspot autoconnect no ssid "$ssid" \
+    802-11-wireless.mode ap 802-11-wireless.band bg 802-11-wireless.channel 6 \
+    ipv4.method shared ipv4.addresses 192.168.4.1/24 ipv6.method disabled \
+    wifi-sec.key-mgmt wpa-psk wifi-sec.psk "$psk" wifi-sec.proto rsn wifi-sec.pairwise ccmp wifi-sec.group ccmp >/dev/null \
+    && log "made hotspot $ssid"
+  mkdir -p /etc/chaipi
+  printf '{"ssid": "%s", "psk": "%s"}\n' "$ssid" "$psk" > "$HS"
+  chown root:chaipi "$HS"; chmod 640 "$HS"
+fi
+
+# --- 3. clock ----------------------------------------------------------------------------------------
+if [ -e /dev/rtc0 ] && command -v hwclock >/dev/null; then
+  rtc=$(hwclock -r --utc 2>/dev/null | head -1)
+  if [ -n "$rtc" ]; then
+    rtc_s=$(date -d "$rtc" +%s 2>/dev/null || echo 0)
+    if [ "$rtc_s" -gt "$(date +%s)" ]; then hwclock -s --utc && log "clock set from the RTC"; fi
+  fi
+fi
+
+# --- 4. sound ----------------------------------------------------------------------------------------
+card=""
+for c in /proc/asound/card[0-9]*; do
+  [ -e "$c/id" ] || continue
+  id=$(cat "$c/id")
+  case "$id" in *[Mm][Aa][Xx]98357*|*[Ss]nd[Rr]pi[Hh]ifi*|*I2S*|*i2s*) card=${c##*card}; break ;; esac
+done
+if [ -n "$card" ]; then
+  want=$(cat <<EOF
+# Written by chaipi-boot: software volume ("Master") and mixing for the I2S amplifier on card $card.
+pcm.!default { type plug; slave.pcm "chaipi_vol" }
+pcm.chaipi_vol { type softvol; slave.pcm "chaipi_mix"; control { name "Master"; card $card } }
+pcm.chaipi_mix { type dmix; ipc_key 4242; ipc_perm 0666; slave { pcm "hw:$card,0"; rate 48000; channels 2; period_size 1024; buffer_size 8192 } }
+ctl.!default { type hw; card $card }
+EOF
+)
+  [ "$(cat /etc/asound.conf 2>/dev/null)" = "$want" ] || { echo "$want" > /etc/asound.conf; log "sound on card $card"; }
+fi
+
+# --- 5. data folders ---------------------------------------------------------------------------------
+install -d -o chaipi -g chaipi -m 755 /data/chaipi
+for d in games engines apps puzzles inbox logs tmp usb appdata; do install -d -o chaipi -g chaipi -m 755 "/data/chaipi/$d"; done
+exit 0
