@@ -21,7 +21,7 @@ jobs:
     runs-on: ${{ inputs.runner }}
     timeout-minutes: 300
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Make disk space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
