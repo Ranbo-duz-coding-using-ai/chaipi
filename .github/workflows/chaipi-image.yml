@@ -28,7 +28,7 @@ jobs:
           df -h /
       - name: ARM emulation (x86 runners only)
         if: runner.arch == 'X64'
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: arm64
       - uses: actions/setup-python@v5
