@@ -4,7 +4,8 @@ Start here:
 
 | Doc | What's in it |
 |---|---|
-| [12 — Hardware](12-revision-3.md) | Parts list with the pitfalls of each part, the final pin map, power, audio, how Transfer works |
+| [Parts list](parts-list.md) | Everything to buy for one ChAIpi, with quantities and the tools you need |
+| [12 — Hardware](12-revision-3.md) | The pitfalls of each part, the final pin map, power, audio, how Transfer works |
 | [03 — Wiring](03-wiring.md) | Step-by-step wiring with a test after each step, every wire in one table, troubleshooting |
 | [13 — Device software](13-device-software.md) | How the OS runs on the Pi, processes, hooks, folders, what's been tested, the bring-up plan |
 | [../image/README.md](../image/README.md) | Getting the SD card: download, build it yourself, or install over SSH |

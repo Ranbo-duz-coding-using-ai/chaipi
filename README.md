@@ -6,9 +6,11 @@
 
 **A pocket chess computer: Stockfish 19 on a Raspberry Pi Zero 2 W, with a 2.8" colour screen, a joystick and six buttons.**
 
-[Try the emulator](#try-it-in-your-browser) · [Flash the SD card](#flash-the-sd-card) · [Build one](#build-one) · [Docs](docs/README.md)
+**[⬇ Download the latest release](../../releases/latest)**
 
-![Status: pre-release, not yet tested on hardware](https://img.shields.io/badge/status-pre--release-orange)
+[Try the emulator](#try-it-in-your-browser) · [Flash the SD card](#flash-the-sd-card) · [Build one](#build-one) · [Parts list](docs/parts-list.md) · [Docs](docs/README.md)
+
+![Status: not yet tested on hardware](https://img.shields.io/badge/status-not%20yet%20tested%20on%20hardware-orange)
 ![Engine: Stockfish 19](https://img.shields.io/badge/engine-Stockfish%2019-8a5214)
 ![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)
 
@@ -19,7 +21,7 @@ ChAIpi plays chess against you at any level from 400 to 3190 Elo, sits next to a
 It's designed to run the official Stockfish 19 build at the Pi's full speed on all four cores, off a battery.
 
 > [!IMPORTANT]
-> **Status: pre-release.** The software is written and tested on a computer: the whole OS runs in the emulator below, and the automated tests pass. The SD-card image builds automatically on GitHub. **It has not yet booted on a real ChAIpi**, and the hardware is still being assembled. Expect fixes after the first real boot. [docs/13](docs/13-device-software.md#what-has-been-tested-and-what-hasnt) lists exactly what has been tested.
+> **Status: not yet tested on hardware.** The software is written and tested on a computer: the whole OS runs in the emulator below, and the automated tests pass. The SD-card image builds automatically on GitHub. **It has not yet booted on a real ChAIpi**, and the hardware is still being assembled. Expect fixes after the first real boot. [docs/13](docs/13-device-software.md#what-has-been-tested-and-what-hasnt) lists exactly what has been tested.
 
 <div align="center">
 <img src="docs/media/tour.gif" alt="Screen recording of the ChAIpi OS: boot animation, home menu, a game in progress, Helper mode with move arrows, game review, the Extras tab, Rickshaw Rush and the graphing calculator" width="640">
@@ -84,7 +86,7 @@ The page also has a phone that's linked to the device, so you can try Transfer f
 
 ## Flash the SD card
 
-1. Download `…-chaipi.img.xz` from the [latest release](../../releases/latest). It's about 850 MB. Don't unzip it.
+1. Download `…-chaipi.img.xz` from the [latest release](../../releases/latest). It's about 880 MB. Don't unzip it.
 2. Open [Raspberry Pi Imager](https://www.raspberrypi.com/software/):
    **Choose Device** → Raspberry Pi Zero 2 W · **Choose OS** → Use Custom → the `.img.xz` · **Choose Storage** → your microSD card (8 GB or more) → **Next** → **No** to OS customisation → **Yes** to write.
 3. Optional, before the first boot: take the card out and back in. A drive called `bootfs` appears. Put either of these plain-text files on it:
@@ -115,7 +117,7 @@ SSH, if you added a key: `ssh pi@chaipi.local`. Passwords don't work over SSH, a
 | DS3231 RTC + CR2032 | Correct dates on saved games |
 | Optional | 5 V vibration motor, MAX98357A I2S amplifier and a small speaker, USB-C breakout with data lines |
 
-The full parts list, with the pitfalls of each part, is in [docs/12](docs/12-revision-3.md). The wiring guide, [docs/03](docs/03-wiring.md), goes step by step, with a test after each step, so a mistake shows up before the next part goes on:
+The [full parts list](docs/parts-list.md) has quantities, what to look for, and the tools you need. The pitfalls of each part are in [docs/12](docs/12-revision-3.md). The wiring guide, [docs/03](docs/03-wiring.md), goes step by step, with a test after each step, so a mistake shows up before the next part goes on:
 
 <div align="center"><img src="docs/wiring/header-map.svg" alt="Raspberry Pi header map showing which GPIO pin goes to each ChAIpi part" width="560"></div>
 
@@ -147,7 +149,7 @@ When the page finds `window.CHAIPI_HOST` (the device), a few dozen hooks call it
 | [enclosure/](enclosure) | the logo badge (STL, GLB, SVG) and the scripts that make it |
 | [tools/](tools) | build the emulator page, capture the README pictures |
 | [tests/](tests) | Python tests for the input daemon and Transfer |
-| [src/](src) | the first desktop prototype (OLED + voice). Not used on the device |
+| [legacy/](legacy/phase0-prototype) | the first desktop prototype (OLED + voice). Not used on the device |
 
 ## Development
 

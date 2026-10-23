@@ -11,9 +11,9 @@ on:
         default: ubuntu-24.04
         options: [ubuntu-24.04, ubuntu-24.04-arm]
       prerelease:
-        description: "Mark the release as a pre-release (keep this on until ChAIpi has been tested on real hardware)"
+        description: "Mark the release as a pre-release (it then isn't shown as Latest, and releases/latest links skip it)"
         type: boolean
-        default: true
+        default: false
 permissions:
   contents: write
 jobs:

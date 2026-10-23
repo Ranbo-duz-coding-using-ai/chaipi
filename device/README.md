@@ -11,7 +11,8 @@ The architecture is in `docs/13-device-software.md`, the hardware in `docs/12-re
 | `bin/` | `chaipi-boot` (every boot) and `chaipi-media` (USB drive mode, SD card), both root | bash |
 | `fonts/` | the four OFL fonts the OS and the phone page use | |
 
-## Tests (run on the Mac, no Pi needed)
+## Tests (no Pi needed)
+The JavaScript tests use JavaScriptCore, which is built into macOS (see CONTRIBUTING.md for Linux).
 ```bash
 /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc device/ui/test/os-smoke.js -- mockup/chaipi-os.html device/ui/lib
 ```
@@ -19,10 +20,10 @@ The architecture is in `docs/13-device-software.md`, the hardware in `docs/12-re
 /System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc device/ui/test/lib-test.js -- device/ui/lib config/chaipi.example.toml
 ```
 ```bash
-.venv/bin/python -m pytest tests/test_input.py tests/test_transfer.py -q
+python3 -m pytest tests/test_input.py tests/test_transfer.py -q
 ```
 
-## Try the transfer page on the Mac
+## Try the transfer page on your computer
 ```bash
 PYTHONPATH=device/transfer python3 -m chaipi_xfer.server --mode hotspot --no-network --data /tmp/chaipi-data --port 8780 --portal device/transfer/portal --fonts device/fonts --pin 1234
 ```

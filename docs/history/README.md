@@ -12,4 +12,4 @@ These are ChAIpi's earlier design docs, kept as a record. **They're superseded.*
 | [09 — Roadmap](09-roadmap.md), [10 — Enclosure](10-enclosure.md) | Revision 1 | The bring-up plan is now in doc 13 |
 | [11 — Revision 2](11-revision-2.md) | Revision 2 | Its GPIO plan and power numbers were replaced in revision 3 |
 
-The Python code in [/src](../../src) is the prototype from this period (OLED + voice). It isn't used on the device.
+The Python code in [legacy/phase0-prototype](../../legacy/phase0-prototype) is the prototype from this period (OLED + voice). It isn't used on the device.

@@ -3,7 +3,7 @@
 ChAIpi runs on Raspberry Pi OS Lite 64-bit (Debian 13 "trixie") with the ChAIpi software on top (docs/13). There are three ways to get there, and each ends with the same system.
 
 ## A. Download the image (easiest)
-1. From the repository's **Releases** page, download `<date>-chaipi.img.xz`. It's about 850 MB. Don't unzip it: Imager reads it as it is. `SHA256SUMS` is there if you want to check the download.
+1. From the repository's **Releases** page, download `<date>-chaipi.img.xz`. It's about 880 MB. Don't unzip it: Imager reads it as it is. `SHA256SUMS` is there if you want to check the download.
 2. Open [Raspberry Pi Imager](https://www.raspberrypi.com/software/):
    - **Choose Device** → Raspberry Pi Zero 2 W
    - **Choose OS** → scroll to the bottom → **Use Custom** → pick the `.img.xz` file

@@ -1,6 +1,6 @@
 # 13 — Device software and the SD-card image (2026-10-23)
 
-This replaces the software plan in docs 05–08 for revision 3 hardware (docs/12). The Phase 0 Python code in `src/chaipi` (OLED + voice) is superseded and not used on the device.
+This replaces the software plan in docs 05–08 for revision 3 hardware (docs/12). The Phase 0 Python code in `legacy/phase0-prototype` (OLED + voice) is superseded and not used on the device.
 
 ## The idea: one OS, two hosts
 The OS you clicked through in `mockup/chaipi-os.html` **is** the device OS. Its `<script>` block runs unchanged in two places:
@@ -92,7 +92,7 @@ Wi-Fi before the buttons are wired: put `chaipi-wifi.txt` on the SD card's boot 
 Driving it over SSH before the buttons arrive: `chaipi-keys` (arrows, Enter, Esc, Tab, m, f; backtick for typing). Screenshot: `sudo systemctl kill -s USR2 chaipi-ui`, then copy `/run/chaipi/screen.png`. Logs: `journalctl -u chaipi-ui -u chaipi-input -f`.
 
 ## What has been tested, and what hasn't
-Tested on the Mac (no Pi needed):
+Tested off-device, on a computer (no Pi needed):
 - The real OS script running with a fake HOST and fake canvas (`device/ui/test/os-smoke.js`, 35 checks). It boots, plays a Helper game to checkmate and saves the PGN. It also covers the engine move request, Transfer with a real QR code request, Wi-Fi connect with a typed password, Shorts feed/search/play/pause/seek/stop, engine download, a Python app, USB and SD, History delete, sleep and shutdown.
 - Engine request rules against a fake Stockfish (`device/ui/test/lib-test.js`): Elo limiting, weak levels, cancelling stale analysis, never interrupting a move, pondering, crash retry. Also the TOML, UCI, pixel, nmcli and PGN helpers.
 - Input daemon logic: ADS1115 config words, joystick hysteresis, battery estimate, low-battery trigger, socket injection (`tests/test_input.py`).

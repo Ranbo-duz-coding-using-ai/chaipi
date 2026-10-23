@@ -1,6 +1,6 @@
 # Mac / desktop development (Phase 0). Python 3.12 or 3.13: vosk wheels can lag behind 3.14.
 #   /Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13 -m venv .venv
-#   .venv/bin/pip install -r requirements-desktop.txt
+#   .venv/bin/pip install -r legacy/phase0-prototype/requirements-desktop.txt
 chess>=1.11
 luma.oled>=3.13
 luma.emulator>=1.5

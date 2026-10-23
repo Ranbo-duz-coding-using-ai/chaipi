@@ -11,7 +11,7 @@ Thanks for helping. Bug reports, hardware notes from your own build, and pull re
 - A new device feature usually needs three changes: the hook in the mockup, its implementation in `host.js` (or `device/ui/lib/`), and a check in `device/ui/test/os-smoke.js`.
 - Pins and tunables live in `config/chaipi.example.toml`. Never hard-code a pin.
 - State is saved atomically (temp file, fsync, rename, fsync the folder). Use `lib/store.js` / `writeAtomic`.
-- `src/chaipi` is the first prototype (OLED + voice). It isn't used on the device, so please don't build on it.
+- `legacy/phase0-prototype/` is the first prototype (OLED + voice). It isn't used on the device, so please don't build on it.
 
 ## Tests
 Run these before sending a pull request. None of them needs a Pi.

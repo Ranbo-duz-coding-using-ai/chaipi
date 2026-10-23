@@ -6,7 +6,7 @@ ChAIpi is a pocket chess computer: **Stockfish 19 on a Raspberry Pi Zero 2 W** w
 - Revision 3. **Read `docs/12-revision-3.md` (hardware, final pin map) and `docs/13-device-software.md` (device software, what's tested) first.** `docs/history/` is the superseded original plan.
 - The UI spec **is** the device OS: `mockup/chaipi-os.html`. On the Pi, `device/ui/host.js` runs its `<script>` in Node.js + @napi-rs/canvas and provides `window.CHAIPI_HOST`. The mockup's hooks are no-ops when HOST is absent. `tools/build_emulator.py` wraps the mockup (a fragment with no doctype) into the emulator page. **Re-run `device/ui/test/os-smoke.js` and click through the emulator after any mockup edit.**
 - Device software is tested off-device only (os-smoke, lib-test, pytest). **The image builds on GitHub Actions, but nothing has booted on a Pi yet.** Next: Phase 1 bring-up in docs/13, with wiring in docs/03.
-- `src/chaipi` + `pyproject.toml` are the abandoned Phase 0 prototype (OLED + voice). Not used on the device. Don't extend them.
+- `legacy/phase0-prototype/` is the abandoned Phase 0 prototype (OLED + voice). Not used on the device. Don't extend it.
 
 ## Key decisions (don't re-litigate without the maintainer)
 - Pi Zero 2 W at stock speed, no underclocking. Stockfish gets 4 threads at nice 5. The UI keeps priority instead of the engine losing a core.
